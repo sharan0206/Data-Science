@@ -23,7 +23,10 @@ app = dash.Dash(__name__)
 #app.title = "Automobile Statistics Dashboard"
 
 #---------------------------------------------------------------------------------
-
+dropdown_options = [
+    {'label': 'Yearly Statistics', 'value': 'Yearly Statistics'},
+    {'label': 'Recession Period Statistics', 'value': 'Recession Period Statistics'}
+]
 # List of years 
 year_list = [i for i in range(1980, 2024, 1)]
 #---------------------------------------------------------------------------------------
@@ -51,7 +54,7 @@ app.layout = html.Div([
             
             value='select-year',
             placeholder='select-year',
-            style={'width': '80%','textAlign': 'center', 'font-size': 20,'border': '3px'}
+            style={'display':'flex'}
         )),
     html.Div([#TASK 2.3: Add a division for output display
     html.Div(id='output-container', className='chart-grid', style={'flex'}),])
@@ -106,11 +109,9 @@ def update_output_container(selected_statistics, input_year):
         # grouping data for plotting
 	# Hint:Use Vehicle_Type and Advertising_Expenditure columns
         exp_rec= recession_data.groupby('Vehicle_Type')['Advertising_Expenditure'].sum().reset_index()
-        R_chart3 = dcc.Graph(
-            figure=px.pie(exp_rec,
-            x='Vehicle_Type',
-            y='Advertising_Expenditure',
-            title="Total expenditure share by vehicle type during recessions"))
+        R_chart3 = dcc.Graph(figure=px.pie(exp_rec,
+        values='Advertising_Expenditure',
+        names='Vehicle_Type'))
 
 # Plot 4 bar chart for the effect of unemployment rate on vehicle type and sales
         #grouping data for plotting
@@ -148,8 +149,8 @@ def update_output_container(selected_statistics, input_year):
 # Plot 2 Total Monthly Automobile sales using line chart.
         # grouping data for plotting.
 	# Hint:Use the columns Month and Automobile_Sales.
-        mas=data.groupby('Month')['Automobile_Sales'].mean().reset_index()
-        Y_chart2 = dcc.Graph(figure=px.line(mas, 
+        #mas=data.groupby('Month')['Automobile_Sales'].sum().reset_index()
+    Y_chart2 = dcc.Graph(figure=px.line(yearly_data, 
                 x='Month',
                 y='Automobile_Sales',
             title='Total Monthly Automobile Sales'))
